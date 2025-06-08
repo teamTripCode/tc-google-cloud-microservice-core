@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         baseURL: configService.get('AUTH_SERVICE_URL'),
-        timeout: 5000,
+        timeout: 10000,
         maxRedirects: 5,
         headers: {
           'Content-Type': 'application/json',
@@ -20,7 +21,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
       inject: [ConfigService]
     }),
   ],
-  providers: [AuthService, JwtAuthGuard],
-  exports: [AuthService, JwtAuthGuard]
+  providers: [AuthService, JwtAuthGuard, RolesGuard],
+  exports: [AuthService, JwtAuthGuard, RolesGuard]
 })
 export class AuthModule { }

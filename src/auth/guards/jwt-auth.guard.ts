@@ -29,7 +29,7 @@ export class JwtAuthGuard implements CanActivate {
 
         try {
             // Extraer token del request
-            const token = await this.authService.extractTokenFromRequest(request);
+            const token = this.authService.extractTokenFromRequest(request);
 
             // Validar token contra el microservicio de auth
             const userPayload = await this.authService.validateToken(token);

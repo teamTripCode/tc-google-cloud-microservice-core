@@ -25,10 +25,12 @@ export class AuthService {
 
   constructor(
     private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
   ) { }
 
   /**
    * Valida un token contra el microservicio de autenticación
+   * Esta es la función principal que necesita este microservicio
    */
   async validateToken(token: string): Promise<UserPayload> {
     try {
@@ -61,6 +63,9 @@ export class AuthService {
         if (error.code === 'ECONNREFUSED') {
           throw new UnauthorizedException('Authentication service unavailable');
         }
+        if (error.code === 'ETIMEDOUT') {
+          throw new UnauthorizedException('Authentication service timeout');
+        }
       }
 
       throw new UnauthorizedException('Token validation failed');
@@ -70,7 +75,7 @@ export class AuthService {
   /**
    * Extrae el token del header Authorization
    */
-  async extractTokenFromRequest(req: Request): Promise<string> {
+  extractTokenFromRequest(req: Request): string {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
